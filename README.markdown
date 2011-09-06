@@ -2,7 +2,7 @@
 
 You can draw a picture of any file by reading chunks of 3 bytes and using them as RGB values.
 
-The resulting pictures can be used to detect structures in the file and speed up browsing with an [hexadecimal editor](http://ridiculousfish.com/hexfiend/).
+The resulting pictures can be used to detect structures in the file and speed up browsing with a [hexadecimal editor](http://ridiculousfish.com/hexfiend/).
 
 ### Usage
 
