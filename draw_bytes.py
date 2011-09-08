@@ -47,5 +47,7 @@ if __name__ == "__main__":
 
     img = image_with_file_at_path(sys.argv[1])
 
-    if img:   
-        img.save(sys.argv[2], "PNG")
+    if not img:
+        sys.exit(1)
+    
+    img.save(sys.argv[2], "PNG")
