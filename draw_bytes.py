@@ -35,33 +35,38 @@ def image_with_file_at_path(path, nb_bytes):
     draw = ImageDraw.Draw(img)
     
     f = open(path, "rb")
+    bytes = f.read()
+    f.close()
+    
+    i = 0
     
     s = "B" * nb_bytes
+
+    while((i + nb_bytes) <= nb_total_bytes):
         
-    while(nb_total_bytes - f.tell() >= nb_bytes):
-        
-        values = struct.unpack(s, f.read(nb_bytes))
+        values = struct.unpack(s, bytes[i:i+nb_bytes])
         
         if nb_bytes == 1:
             c = "%c" % values[0]
             values = (0, 128, 0) if c in string.printable else values*3
         
-        pixels_count = f.tell() / nb_bytes - 1
+        pixels_count = i / nb_bytes
+        
         x = pixels_count % W
         y = pixels_count / W
         
         draw.point((x,y), values)
-        
-    f.close()
+
+        i += nb_bytes
     
     return img
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Draw any file as an image.')
-    parser.add_argument('-n','--nb_bytes', help='Number of bytes per pixel', choices=[1,3,4], default=3, required=False, type=int)
-    parser.add_argument('src', help='Path of the source file')
-    parser.add_argument('dst', help='Path of the destination PNG image')
+    parser.add_argument('-n','--nb_bytes', help='number of bytes per pixel', choices=[1,3,4], default=3, required=False, type=int)
+    parser.add_argument('src', help='path of the source file')
+    parser.add_argument('dst', help='path of the destination PNG image')
     args = vars(parser.parse_args())
 
     #print args
