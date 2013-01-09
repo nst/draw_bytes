@@ -4,23 +4,23 @@ import Image, ImageDraw # http://pypi.python.org/pypi/PIL
 import struct
 import os
 import sys
+import string
+import argparse
 
-def image_with_file_at_path(path, img_mode):
+def image_with_file_at_path(path, nb_bytes):
 
-    chunks_length = None
-
-    if img_mode == "RGB":
-        chunks_length = 3
-    elif img_mode == "CMYK":
-        chunks_length = 4
+    if nb_bytes in [1, 3]:
+        img_mode = "RGB"
+    elif nb_bytes == 4:
+        img_mode = "CMYK"
     else:
-        return None
-
-    nb_bytes = os.path.getsize(path)
-    nb_points = nb_bytes / chunks_length
+        return
     
-    if nb_bytes < chunks_length:
-        print "%d bytes found, at least %d bytes needed" % (nb_bytes, chunks_length)
+    nb_total_bytes = os.path.getsize(path)
+    nb_points = nb_total_bytes / nb_bytes
+    
+    if nb_total_bytes < nb_bytes:
+        print "%d bytes found, at least %d bytes needed" % (nb_total_bytes, nb_bytes)
         return None
     
     W = 256
@@ -28,7 +28,7 @@ def image_with_file_at_path(path, img_mode):
     if (nb_points % W != 0):
         H += 1
     
-    print "%d Bytes" % nb_bytes
+    print "%d Bytes" % nb_total_bytes
     print "%d x %d pixels" % (W, H)
 
     img = Image.new(img_mode, (W, H), "black")
@@ -36,13 +36,17 @@ def image_with_file_at_path(path, img_mode):
     
     f = open(path, "rb")
     
-    s = "B" * chunks_length
-    
-    while(nb_bytes - f.tell() >= chunks_length):
+    s = "B" * nb_bytes
         
-        values = struct.unpack(s, f.read(chunks_length))
-    
-        pixels_count = f.tell() / chunks_length - 1
+    while(nb_total_bytes - f.tell() >= nb_bytes):
+        
+        values = struct.unpack(s, f.read(nb_bytes))
+        
+        if nb_bytes == 1:
+            c = "%c" % values[0]
+            values = (0, 128, 0) if c in string.printable else values*3
+        
+        pixels_count = f.tell() / nb_bytes - 1
         x = pixels_count % W
         y = pixels_count / W
         
@@ -53,15 +57,20 @@ def image_with_file_at_path(path, img_mode):
     return img
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print "USAGE:", sys.argv[0], "IN_FILE OUT_FILE && open OUTFILE"
-        sys.exit(1)
 
-#    img = image_with_file_at_path(sys.argv[1], "RGB")
-    img = image_with_file_at_path(sys.argv[1], "CMYK")
+    parser = argparse.ArgumentParser(description='Draw any file as an image.')
+    parser.add_argument('-n','--nb_bytes', help='Number of bytes per pixel', choices=[1,3,4], default=3, required=False, type=int)
+    parser.add_argument('src', help='Path of the source file')
+    parser.add_argument('dst', help='Path of the destination PNG image')
+    args = vars(parser.parse_args())
+
+    #print args
+
+    img = image_with_file_at_path(args['src'], args['nb_bytes'])
 
     if not img:
+        print "-- can't build image, exit"
         sys.exit(1)
     
     img = img.convert('RGB')
-    img.save(sys.argv[2], "PNG")
+    img.save(args['dst'], "PNG")
