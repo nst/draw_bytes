@@ -38,4 +38,4 @@ In RGB `00 00 00` is black, `FF FF FF` is white. ASCII text is mostly betwen 40 
 
 In CMYK, `00 00 00 00` is white `FF FF FF FF` is black. ASCII text tend to appear in dark.
 
-<img src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_1.png"> <img src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_3.png"> <img src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_4.png">
+<img halign="top" src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_1.png"> <img halign="top" src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_3.png"> <img halign="top" src="https://raw.github.com/nst/draw_bytes/master/images/RuntimeBrowser_4.png">
