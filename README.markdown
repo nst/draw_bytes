@@ -27,6 +27,10 @@ The resulting pictures can be used to detect structures in the file and speed up
 ### Typical Usage
 
     $ python draw_bytes.py -n 3 test.doc test.doc.png && open test.doc.png
+    
+    $ dd if=/dev/urandom of=r.dat bs=1k count=1024 \
+      && python draw_bytes.py -n 4 r.dat r.png \
+      && open r.png
 
 ### Sample Result
 
